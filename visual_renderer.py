@@ -1,3 +1,4 @@
+import numpy as np
 
 def visualise(board_state: list[list[int]]):
     # ANSI Color codes
@@ -21,7 +22,8 @@ def visualise(board_state: list[list[int]]):
         # Joining with " | " makes it look like a real grid
         print(f"| {' | '.join(row)} |")
         print("-"*13)
-        
+
+
 
 
 

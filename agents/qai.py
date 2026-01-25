@@ -18,7 +18,6 @@ class QLearningAgent():
 
     def get_best_action(self,board_state,turn_count) -> str:
         possible_actions = self.get_possible_actions(board_state) or []
-       #print(possible_actions)
         action_taken = random.choice(possible_actions)
         best_reward = self.qtable_expected(board_state,action_taken)
         for action in possible_actions:
