@@ -1,122 +1,63 @@
 import numpy as np
 import copy
 import numpy as np
-from game_logic import play_move
 import copy
 from tqdm import tqdm
+from game_logic import WINNING_MASKS
 
 class Agent:
     def __init__(self):
         pass
 
-    def play(self,state):
-        pass
-        
-    def turncount(self,state):
-        return 10 - len(self.actions(state))
+    def play(self,x_state,o_state,state,action):
+        turn_count = self.turn_count(state)
+        if not self.legal(state,str(action)):
+            raise ValueError(f"Invalide action ({action}) in state ({state})")
 
+        mask = 0b1 << (8-action)
 
-    def actions(self,state:np.ndarray) -> list:
-        possible_actions = []
-        action = 0
-        for row_index in range(len(state[0])):
-            for column_index in range(len(state)):
-                if state[row_index][column_index] == 0:
-                    possible_actions.append(action)
-                action += 1
-
-        return possible_actions
-    
-
-    def player(self,state:np.ndarray):
-        turn_count = self.turncount(state)
         if turn_count % 2 == 1:
-            return "XMIN"
+            x_state |= mask
         else:
-            return "OMAX"
+            o_state |= mask
+
+        state = x_state | o_state
+        return x_state, o_state, state
+
+    def actions(self,state) -> list:
+        state_str = format(state,'09b')
+        actions = [i for i in range(len(state_str)) if state_str[i] == '0']
+
+        return actions
     
-    def result(self,state:np.ndarray,action:int) -> np.ndarray:
-        state = copy.deepcopy(state)
-        turn_count = self.turncount(state)
-        state = play_move(state, action, turn_count)
-        return state
+    def turn_count(self,state) -> int:
+        turn_count = bin(state).count('1')
+        return turn_count
+    
+    def eval(self,x_state,o_state,state):
 
+        x_win = any((x_state & mask) == mask for mask in WINNING_MASKS)
+        o_win = any((o_state & mask) == mask for mask in WINNING_MASKS)
+        #draw = (bin(state).count('1') == 9)
 
-    def terminal(self,state:"np.ndarray"):
-        # Check Rows
-        for row in state:
-            if sum(row) == 3:
+        if x_win:
+            return -1000
+        elif o_win:
+            return 1000
+        return 0
+
+    def terminal(self,x_state,o_state,state):
+        x_win = any((x_state & mask) == mask for mask in WINNING_MASKS)
+        o_win = any((o_state & mask) == mask for mask in WINNING_MASKS)
+        draw = (bin(state).count('1') == 9)
+
+        return x_win or o_win or draw
+    
+    def legal(self,state,action:int) -> bool:
+        state_str = format(state,'09b')
+        if action.isdigit() and 0 <= int(action) <= 8:
+            if state_str[int(action)] == '0':
                 return True
-            elif sum(row) == -3:
-                return True
-            
-        # Check Columns
-        for i in range(len(state[0])):
-            sum_column = 0
-            for j in range(len(state)):
-                sum_column += state[j][i]
-
-            if sum_column == 3:
-                return True
-            elif sum_column == -3:
-                return True
-
-        # Check Diagonals
-        sum_diagonal_left = 0
-        sum_diagonal_right = 0
-        size = len(state)
-
-        for i in range(size):
-            # Left-to-right: (0,0), (1,1), (2,2)
-            sum_diagonal_left += state[i][i]
-            
-            # Right-to-left: (0,2), (1,1), (2,0)
-            sum_diagonal_right += state[i][size - 1 - i]
-
-        if sum_diagonal_left == 3 or sum_diagonal_right == 3:
-            return True
-        if sum_diagonal_left == -3 or sum_diagonal_right == -3:
-            return True
         
-        if len(self.actions(state)) == 0:
-            return True
-
         return False
 
-    def value(self,state:list[list[int]]) -> int:
-        # Check Rows
-        for row in state:
-            if sum(row) == 3:
-                return 1
-            elif sum(row) == -3:
-                return -1
-            
-        # Check Columns
-        for i in range(len(state[0])):
-            sum_column = 0
-            for j in range(len(state)):
-                sum_column += state[j][i]
-
-            if sum_column == 3:
-                return 1
-            elif sum_column == -3:
-                return -1
-
-        # Check Diagonals
-        sum_diagonal_left = 0
-        sum_diagonal_right = 0
-        size = len(state)
-
-        for i in range(size):
-            # Left-to-right: (0,0), (1,1), (2,2)
-            sum_diagonal_left += state[i][i]
-            
-            # Right-to-left: (0,2), (1,1), (2,0)
-            sum_diagonal_right += state[i][size - 1 - i]
-
-        if sum_diagonal_left == 3 or sum_diagonal_right == 3:
-            return 1
-        if sum_diagonal_left == -3 or sum_diagonal_right == -3:
-            return -1
-        
-        return 0

@@ -1,5 +1,4 @@
 import numpy as np
-from game_logic import play_move
 import random
 import copy
 from tqdm import tqdm

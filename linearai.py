@@ -1,6 +1,6 @@
 from agents.agent import Agent
-from agents.randomai import RandomAI
-from agents.minimaxai import MiniMaxAI
+from agents.random_agent import RandomAI
+from agents.minmax_agent import MiniMaxAI
 import numpy as np
 from game_logic import is_game_over,is_move_legal,play_move
 import copy
