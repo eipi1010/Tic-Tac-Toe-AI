@@ -1,5 +1,5 @@
-from backend.agents.agent import Agent
-from tictactoe.backend.game import WINNING_MASKS
+from agents.agent import Agent
+from game import WINNING_MASKS
 import random
 
 

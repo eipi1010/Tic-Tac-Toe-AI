@@ -1,11 +1,9 @@
 
-from tictactoe.backend.game import TicTacToe
-from backend.unused.qai import QLearningAgent
-import numpy as np
-from backend.agents.minmax_agent import MinMaxAgent
+from game import TicTacToe
+from agents.minmax_agent import MinMaxAgent
 #from agents.linearai import LinearAI
-from backend.agents.random_agent import RandomAgent
-from backend.agents.human_agent import HumanAgent
+from agents.random_agent import RandomAgent
+from agents.human_agent import HumanAgent
 #from backened.agents.Qlearning_agent import QLearningAgent
 import copy
 import random

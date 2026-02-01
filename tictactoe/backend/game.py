@@ -60,7 +60,7 @@ class TicTacToe:
         print(f"Draws: {self.draw_count} ({self.draw_count/games*100:.1f}%)")
 
     def turn(self, x, o, state):
-        turn_count = bin(state).count('1')
+        turn_count = bin(state).count('1') + 1
         if turn_count % 2 == self.turn_order:
             # Player 1's turn
             if self.verbose: 
@@ -81,6 +81,9 @@ class TicTacToe:
             x, o, state = self.player_two.play(x, o, state, action)
         
         return x, o, state
+    
+    def turn_count(self,state):
+        return bin(state).count('1') + 1
 
     def is_game_over(self, x_state, o_state, state) -> bool:
         x_win = any((x_state & mask) == mask for mask in WINNING_MASKS)
